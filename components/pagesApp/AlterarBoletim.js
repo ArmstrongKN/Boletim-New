@@ -32,8 +32,8 @@ export default function AddBoletim({ navigation, route }) {
                 <TextInput
                     style={estilo.input}
                     placeholder="Digite sua nota"
-                    onChangeText={setNota}
-                    value={nota}
+                    onChangeText={(text) => setNota(parseFloat(text))}
+                    value={nota.toString()} // Garante que nota seja uma string
                 />
                 <TouchableOpacity
                     style={estilo.btnenviar}

@@ -9,7 +9,7 @@ export default function CadastroBoletim({ navigation }) {
     function addDisciplina() {
         Firebase.collection("boletim").add({
             Disciplina: Disciplina,
-            Nota: 10
+            Nota: parseFloat(Nota) // Converter Nota para número
         })
         .then(() => {
             Alert.alert("Disciplina", "Disciplina cadastrada com sucesso!");
@@ -18,18 +18,9 @@ export default function CadastroBoletim({ navigation }) {
         .catch(error => {
             console.error("Erro ao adicionar disciplina: ", error);
             Alert.alert("Erro", "Ocorreu um erro ao cadastrar a disciplina. Por favor, tente novamente.");
-        })
-    .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-         navigation.navigate("Home");
-     }).catch((error) => {
-        const errorCode = error.code;
-         const errorMessage = error.message;
-         alert(errorMessage);
-         console.log(errorMessage);
-     });
+        });
     }
+
     return (
         <View style={estilo.container}>
             <View>
@@ -90,6 +81,7 @@ const estilo = StyleSheet.create({
         textAlign: 'center',
     },
 });
+
 
     
 
