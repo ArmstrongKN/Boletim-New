@@ -1,35 +1,41 @@
 import React, {useState, useEffect} from 'react';
 import {  View, Text, StyleSheet,  FlatList, TouchableOpacity, Alert } from 'react-native';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { getFirestore, collection, doc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import Firebase from '../Firebase';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Home({navigation}) { 
  
+  const auth = getAuth();
  
   const [boletim, setBoletim] = useState([]);
 
+  const firestore = getFirestore();
+
   function deleteBoletim(id)
   {
-    Firebase.collection("diario").doc(id).delete();
+    Firebase.collection("boletim").doc(id).delete();
 
     Alert.alert("O Boletim foi Deletado.");
   }
 
-  useEffect(()=>
-  {
-    Firebase.collection("boletim").onSnapshot((query)=>
-    {
-      const lista=[];
-      query.forEach((doc) =>
-      {
-        lista.push({...doc.data(),id: doc.id});
-      });
+  useEffect(() => {
+
+    const unsubscribeDiario = onSnapshot(collection(firestore, 'boletim'), (querySnapshot) => {
+
+      const lista = [];
+      querySnapshot.forEach((doc) => { lista.push({ ...doc.data(), id: doc.id }); });
       setBoletim(lista);
-    });
-  },[]);
+
+    }); 
+
+    return () => { unsubscribeDiario(); unsubscribeAuth(); };
+
+  }, [auth, navigation]);
 
   return (
-    <View style={styles.container}>
+    <View style={estilo.container}>
       <View>
         <Text style={estilo.titulo}>Meu Boletim</Text>
       </View>
@@ -42,8 +48,8 @@ export default function Home({navigation}) {
 
             <TouchableOpacity onPress={()=>navigation.navigate("AlterarBoletim",{
               id: item.id,
-              disciplina: item.disciplina,
-              nota: item.nota 
+              // disciplina: item.disciplina,
+              // nota: item.nota 
               })}>
               <View style={estilo.itens}>
                 <Text style={estilo.tituloboletim}> Disciplina: <Text style={estilo.textoBoletim}>{item.titulo}</Text></Text>
